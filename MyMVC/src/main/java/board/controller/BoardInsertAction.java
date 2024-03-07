@@ -1,7 +1,15 @@
 package board.controller;
 
+import java.io.File;
+import java.io.IOException;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.oreilly.servlet.MultipartRequest;
+import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
 import board.model.BoardDAO;
 import board.model.BoardVO;
@@ -11,14 +19,38 @@ public class BoardInsertAction extends AbstractAction {
 
 	@Override
 	public void execute(HttpServletRequest req, HttpServletResponse res) throws Exception {
-		// 1. 사용자가 입력한 값 받기
-		String name = req.getParameter("name");
-		String passwd = req.getParameter("passwd");
-		String title = req.getParameter("title");
-		String content = req.getParameter("content");
-		// 첨부파일명, 파일크기 나중에
-		String fileName = null;
+		// 0. 파일 업로드 처리
+		// [1] 업로드할 디렉토리의 절대경로 얻기
+		ServletContext application = req.getServletContext();
+		String upDir = application.getRealPath("/upload");
+		System.out.println("upDir : " + upDir);
+		// [2] cos.jar의 MultipartRequest 객체를 생성 -> 업로드 처리를 해줌
+		MultipartRequest mreq = null;
+		try {
+			// 동일한 파일명일때, 파일명에 인덱스 번호를 붙임 -> 덮어쓰기 방지
+			DefaultFileRenamePolicy df = new DefaultFileRenamePolicy();
+			
+			mreq = new MultipartRequest(req, upDir, 100*1024*100, "utf-8", df);	// 업로드 최대 용량 : 100mb
+		} catch (IOException e) {
+			System.out.println("파일 업로드 실패 : " + e);
+//			throw new ServletException(e);
+			return;
+		}
+		
+		// 1. 사용자가 입력한 값 받기 -> multipartRequest를 이용해 파라미터값 추출
+		String name = mreq.getParameter("name");
+		String passwd = mreq.getParameter("passwd");
+		String title = mreq.getParameter("title");
+		String content = mreq.getParameter("content");
+		System.out.println("name : " + name);
+
+		// 첨부파일명 -> getFilesystemName("파라미터명")으로 얻는다. getParameter x
+		String fileName = mreq.getFilesystemName("fileName");
+		File file = mreq.getFile("fileName");
 		long fileSize = 0;
+		if(file!=null) {
+			fileSize = file.length(); // 파일 크기
+		}
 		
 		// 2. 유효성 체크
 		if(name==null || passwd==null || title==null || name.trim().isBlank() || passwd.trim().isBlank() || title.trim().isBlank()) {

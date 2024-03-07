@@ -82,3 +82,7 @@ input, select, textarea, iframe, button{
 	color : #289d89;
 	font-weight: bold;
 }
+
+.text-center{
+	text-align: center;
+}

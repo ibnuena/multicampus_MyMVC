@@ -6,7 +6,7 @@
 <!-- 제어문은 core 태그에 모여 있음 -------------------------------- -->
 		<!-- content -->
 		<div class="container">
-			<h1>MVC Board</h1>
+			<h1>MVC Board - [검색어 : ${findKeyword }]</h1>
 			<br>
 			<a href="input.do">글쓰기</a>
 			<br>
@@ -54,7 +54,7 @@
 					<td colspan="3" style="text-align:center">
 						<!-- 페이지 네비게이션 -->
 						<c:forEach var="i" begin="1" end="${pageCount}" step="1">
-							[<a href="list.do?pageNum=${i}" <c:if test="${pageNum==i}">class='active'</c:if> > ${i} </a>]
+							[<a href="find.do?pageNum=${i}&findType=${findType }&findKeyword=${findKeyword}" <c:if test="${pageNum==i}">class='active'</c:if> > ${i} </a>]
 						</c:forEach>
 					</td>
 					<td colspan="2" style="text-align:center">

@@ -8,7 +8,16 @@
 	<div class="container">
 		<h1>MVC Board</h1>
 		<br><br>
-		<form name="bbsF" method="post" action="insert.do" >
+		<!-- 
+		파일 업로드시 주의사항
+		[1] form태그 내에 method는 post로 지정
+		[2] enctype을 multipart/form-data로 지정해야 한다
+			multipart/form-data로 지정해야 파일 데이터가 서버에 전달된다
+			
+			application/x-www-form-urlencoded(디폴트)로 지정하면 파일명만 전송된다
+		 -->
+		<form name="bbsF" method="post" action="insert.do"
+		 						enctype="multipart/form-data" >
 		<table border="1">
 			<tr>
 				<th width="20%">글제목</th>
